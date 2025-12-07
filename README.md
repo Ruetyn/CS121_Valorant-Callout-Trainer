@@ -158,6 +158,31 @@ pickMap():
     ask user to pick a map number
     return the selected map object
 
+simplifyAngle(angle):
+    set resutl to angle
+    set lower to angle converted to lowercase
+    if lower contains "attacker spawn":
+        set result to "T"
+    else if lower contains "defender spawn":
+        set result to "CT"
+    else if lower starts with "a ":
+        set result to substring of angle starting at index 2, trimmed
+    else if lower starts with "b ":
+        set result to substring of angle starting at index 2, trimmed
+    else if lower starts with "c ":
+        set result to substring of angle starting at index 2, trimmed
+    else if lower contains "link":
+        set result to "Link"
+    else if lower contains "heaven":
+        set result to "Heaven"
+    else if lower contains "hell":
+        set result to "Hell"
+    else if lower contains "main":
+        set result to "Main"
+    else if lower starts with "mid ":
+        set result to substring of angle starting at index 4, trimmed
+    return result
+
 menu():
     display:
         "0) Exit Training"
