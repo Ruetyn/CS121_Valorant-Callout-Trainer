@@ -1,6 +1,9 @@
 all:
 	javac -g *.java
 
+run: all
+	java ValorantCalloutTrainer
+
 testMap: all
 	java Map
 

@@ -58,6 +58,34 @@ public class AngleTrainer implements HasMenu {
 		return maps.get(choice);
 	} // end pickMap()
 	
+	private String simplifyAngle(String angle) {
+		String result = angle;
+		String lower = angle.toLowerCase();
+
+		if (lower.contains("attacker spawn")) {
+			result = "T";
+		} else if (lower.contains("defender spawn")) {
+			result = "CT";
+		} else if (lower.startsWith("a ")) {
+			result = angle.substring(2).trim();
+		} else if (lower.startsWith("b ")) {
+                        result = angle.substring(2).trim();
+		} else if (lower.startsWith("c ")) {
+                        result = angle.substring(2).trim();
+		} else if (lower.contains("link")) {
+			result = "Link";
+		} else if (lower.contains("heaven")) {
+			result = "Heaven";
+		} else if (lower.contains("hell")) {
+			result = "Hell";
+		} else if (lower.contains("main")) {
+			result = "Mid";
+		} else if (lower.startsWith("mid ")) {
+			result = angle.substring(4).trim();
+		}
+		return result;
+	} // end simplifyAngle()
+	
 	@Override
 	public String menu() {
 		System.out.println("--- Training Menu ---");
@@ -70,47 +98,52 @@ public class AngleTrainer implements HasMenu {
 	
 	@Override
 	public void start() {
-		Map currentMap = null;
 		boolean keepTraining = true;
+		boolean keepScenario = true;
 		while (keepTraining) {
 			String choice = menu();
+			Map currentMap = null;
 
-			if (choice == "0") {
+			if (choice.equals("0")) {
 				keepTraining = false;
+				keepScenario = false;
 			} else if (choice.equals("1")) {
 				currentMap = mapManager.getRandomMap(true);
+				keepScenario = true;
 			} else if (choice.equals("2")) {
 				currentMap = mapManager.getRandomMap(false);
-			} else if (choice == "3") {
+				keepScenario = true;
+			} else if (choice.equals("3")) {
 				currentMap = pickMap();
+				keepScenario = true;
 			} else {
 				System.out.println("Invalid option");
 			} // end if
-		} // end while
 		
-		boolean keepScenario = true;
-		while (keepScenario) {
-			String angle = mapManager.getRandomAngle(currentMap);
-			int enemyCount = random.nextInt(5) + 1;
-			String event = getRandomEvent();
+			while (keepScenario) {
+				String angle = mapManager.getRandomAngle(currentMap);
+				int enemyCount = random.nextInt(5) + 1;
+				String event = getRandomEvent();
+				String simpleAngle = simplifyAngle(angle);
 
-			System.out.println("You see " + enemyCount + " enemies at " + angle + " on " + currentMap.getName() + " and " + event + ".");
-			System.out.println("Speak your callout aloud and press Enter when done...");
+				System.out.println("You see " + enemyCount + " enemies at " + angle + " on " + currentMap.getName() + " and they used a " + event + ".");
+				System.out.println("Speak your callout aloud and press Enter when done...");
 
-			Instant start = Instant.now();
-			scanner.nextLine();
-			Instant end = Instant.now();
+				Instant start = Instant.now();
+				scanner.nextLine();
+				Instant end = Instant.now();
 
-			Duration duration = Duration.between(start, end);
-			double seconds = duration.toMillis() / 1000.0;
-			System.out.println("Communication time: " + seconds + " seconds");
-			System.out.println("Example callout: \"" + enemyCount + " " + angle + " - " + event + "\"");
+				Duration duration = Duration.between(start, end);
+				double seconds = duration.toMillis() / 1000.0;
+				System.out.println("Communication time: " + seconds + " seconds");
+				System.out.println("Example callout: \"" + enemyCount + " " + simpleAngle + " used a " + event + "\"");
 
-			System.out.println("Press Enter to repeat scenario, or type M to return to menu.");
-			String repeatChoice = scanner.nextLine().trim();
-			if (repeatChoice.equalsIgnoreCase("M")) {
-				keepScenario = false;
-			} // end if
+				System.out.println("Press Enter to repeat scenario, or type M to return to menu.");
+				String repeatChoice = scanner.nextLine().trim();
+				if (repeatChoice.equalsIgnoreCase("M")) {
+					keepScenario = false;
+				} // end if
+			} // end while
 		} // end while
 	} // end start()
 	
